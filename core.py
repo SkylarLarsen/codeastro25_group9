@@ -1,6 +1,11 @@
 
 from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
 from astroquery.simbad import Simbad
+
+from astropy import units as u
+from astropy.units import Quantity, UnitTypeError
+from astropy.constants import R_earth, M_earth, R_sun, M_sun, G
+
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -72,3 +77,23 @@ def visualize(df, time_bc, distance_bc, planet_AU):
     plt.ylabel("Distance from Star (AU)")
 
     plt.show()
+
+
+def __ensure_unit(x, unit: u.Unit):
+    """Helper method to ensure input units are correct
+    :param x: Variable to check
+    :param unit: Desired unit (astropy.unit)
+    :returns x: Parameter x with proper unit attached. 
+    :raises UnitTypeError: UnitTypeError raised when quantity requires conversion, but conversion cannot be completed
+    """
+
+    if x is None:
+        return x
+    if not isinstance(x, Quantity):
+        x = x * unit
+    elif x.unit != unit:
+        try:
+            x = x.to(unit)
+        except u.UnitConversionError as uce:
+            raise u.UnitTypeError(f"{x} cannot be converted to {unit}")
+    return x
