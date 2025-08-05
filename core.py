@@ -3,7 +3,7 @@ from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
 from astroquery.simbad import Simbad
 import pandas as pd
 
-def get_current_parameters(planet_name='Earth',star_name='Sun'):
+def get_current_parameters(planet_name='Kepler-22 b'):
   '''
   Returns:
   Dictionary of stellar parameters. Keys in dictionary include:
@@ -16,10 +16,10 @@ def get_current_parameters(planet_name='Earth',star_name='Sun'):
   name_planet: name of planet in nasa exoplanet archive (string)
   name_star: name of star in Simbad (string)
   '''
-  composite_set = NasaExoplanetArchive.query_criteria(table="pscomppars", where=f"pl_name='{planet_name}'")#where=f"disc_facility like'{planet_name}'"
-  comp_df = composite_set.to_pandas()
-  #comp_dict = comp_df.to_dict(orient='records')[0]
-  return comp_df
+  tab = NasaExoplanetArchive.query_criteria(table="pscomppars", where=f"pl_name='{planet_name}'").to_pandas()
+  dict = planet_tab.to_dict(orient='records')[0]
+  #star_dict = star_tab.to_dict(orient='records')[0]
+  return dict
 
   # pl = Planet(name=comp_dict['pl_name'], properties=comp_dict)
 
