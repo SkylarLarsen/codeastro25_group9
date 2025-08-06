@@ -10,11 +10,16 @@ import matplotlib.pyplot as plt
 
 def get_current_parameters(planet_name=['Kepler-22 b']):
   '''
-  Returns:
-  Pandas Dataframe of stellar and planet parameters
+   Returns a dataframe of planet and host star parameters. Parameters include planet name, host star name,
+   planet radius [Rearth], planet mass [Mearth], ratio of planet to stellar radius, stellar effective temperature [K],
+   stellar radius [Rsun], stellar mass [Msun],stellar luminosity [log10(Solar)], stellar age [Gyr], orbital period [days],
+   and orbit semi-major axis [AU].
 
   Args:
-  name_planet: list of names of planets in nasa exoplanet archive (string)
+  name_planet (list): list of planet names in nasa exoplanet archive
+  
+  Returns:
+  Pandas dataframe: Planet names and parameters for the planet and host star
   '''
   data=[]
   for i in range(len(planet_name)):
