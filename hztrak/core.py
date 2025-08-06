@@ -55,13 +55,13 @@ def visualize(df, time_bc, distance_bc, planet_AU):
     Plot the evolution of the habitable zone over time. X-axis is time (Gyr) and y-axis is distance from the star (AU).
 
     Args:
-        df : pandas dataframe. Columns are time, distance_hz_in, distance_hz_out
+        df (Pandas dataframe): Columns are time, distance_hz_in, distance_hz_out
     
-    time_bc : list. The lower and upper time boundary conditions for your plot. Units in Gyr
+    time_bc (list): The lower and upper time boundary conditions for your plot. Units in Gyr
     
-    distance_bc : list. The lower and upper distance-from-star boundary conditions for your plot. Units in AU
+    distance_bc (list): The lower and upper distance-from-star boundary conditions for your plot. Units in AU
     
-    planet_AU : list. List of planet distances from star in AU
+    planet_AU (list): List of planet distances from star in AU
     
     Returns:
         matplotlib.axes.Axes
