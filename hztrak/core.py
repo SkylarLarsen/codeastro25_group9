@@ -5,6 +5,7 @@ from astropy.units import Quantity, UnitTypeError
 from astropy.constants import R_earth, M_earth, R_sun, M_sun, G
 
 import pandas as pd
+import matplotlib.axes
 import matplotlib.pyplot as plt
 
 
@@ -62,25 +63,21 @@ def get_current_parameters(planet_name=['Kepler-22 b']):
 #   return bounds
 
 def visualize(df, time_bc, distance_bc, planet_AU):
-    """
-    Inputs
-    ------
+    """Visualization_1
 
-    df : dataframe
-        Columns are time, distance_hz_in, distance_hz_out
+    Plot the evolution of the habitable zone over time. X-axis is time (Gyr) and y-axis is distance from the star (AU).
+
+    Args:
+        df : pandas dataframe. Columns are time, distance_hz_in, distance_hz_out
     
-    time_bc : list
-        The lower and upper time boundary conditions for your plot. Units in Gyr
+    time_bc : list. The lower and upper time boundary conditions for your plot. Units in Gyr
     
-    distance_bc : list
-        The lower and upper distance-from-star boundary conditions for your plot. Units in AU
+    distance_bc : list. The lower and upper distance-from-star boundary conditions for your plot. Units in AU
     
-    planet_AU : list
-        List of planet distances from star in AU
+    planet_AU : list. List of planet distances from star in AU
     
-    Returns
-    -------
-    plots how habitable zone changes over time
+    Returns:
+        matplotlib.axes.Axes
     """
 
     df = df[(df.time > time_bc[0]) | (df.time < time_bc[1])] # trim x axis
@@ -97,6 +94,7 @@ def visualize(df, time_bc, distance_bc, planet_AU):
     plt.ylabel("Distance from Star (AU)")
 
     plt.show()
+    return matplotlib.axes.Axes
 
 
 def ensure_unit(x, unit: u.Unit):
