@@ -1,7 +1,5 @@
 
 from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
-from astroquery.simbad import Simbad
-
 from astropy import units as u
 from astropy.units import Quantity, UnitTypeError
 from astropy.constants import R_earth, M_earth, R_sun, M_sun, G
