@@ -1,5 +1,16 @@
 class calc:
     def alpha_beta_gamma(self, mass):
+        ''' Alpha Beta Gamma Params
+
+        Calculates the parameters alpha, beta, and gamma to be used in evolution functions
+        depending on the mass of the queried star 
+
+        Args:
+            mass (int): mass of selected star for stellar evolution
+        
+        Returns: 
+            int: alpha, beta, gamma
+        '''
         if mass < 0.43:
             alpha=2.3
             beta=0.1
@@ -21,20 +32,81 @@ class calc:
         return alpha, beta, gamma
     
     def luminosity_evolve(self, L_0, beta, t_f, t, alpha):
+        ''' 
+        Evolve Luminosity
+
+        Evolves the luminosity to future time t_f
+
+        Args:
+            L_0 (int): initial luminosity
+            beta (int): L evolution parameter
+            t_f (int): end time user wishes to evolve to
+            t (int): time variable
+            alpha: mass ratio parameter
+        
+        Returns:
+            int: final luminosity at timestep of t_f
+        '''
+
         L_f = L_0 * (1 + beta * (t / t_f) ** alpha)
         return L_f
     
     def radius_evolve(self, R_0, gamma, t_f, t, alpha):
+        ''' 
+        Evolve Radius
+
+        Evolves the radius to future time t_f
+
+        Args:
+            R_0 (int): initial radius
+            gamma (int): R evolution parameter
+            t_f (int): end time user wishes to evolve to
+            t (int): time variable
+            alpha: mass ratio parameter
+        
+        Returns:
+            int: final radius at timestep of t_f
+        '''
+
         R_f = R_0 * (1 + gamma * (t / t_f) ** alpha)
         return R_f
     
     def temp_evolve(self, T_0, L_f, L_0, R_f, R_0):
+        ''' 
+        Evolve Temperature
+
+        Evolves the temperature to future time t_f
+
+        Args:
+            T_0 (int): initial temperature
+            L_f (int):  final luminosity
+            L_0 (int): inital luminosity
+            R_f (int): final radius
+            R_0 (int): initial radius
+        
+        Returns:
+            int: final temperature at timestep of t_f
+        '''
         T_f = T_0 * (L_f / L_0)**(1/4) * (R_f / R_0)**(-1/2)
         return T_f
     
     def evolve_star(self, L_0, R_0, T_0, mass, t_f=1e10, steps=10):
         """
+        Evolve star 
+
         Evolve the star's L, R, and T over time and return numpy arrays.
+
+        Args:
+            L_0 (int): inital luminosity
+            R_0 (int): initial radius
+            T_0 (int): initial temperature
+            mass (int): mass of selected star for stellar evolution
+            t_f (int): end time user wishes to evolve to
+            steps (int): number of intervals in t_f
+
+        Returns:
+            arrays for time, luminosity, radius, and temp
+
         """
         alpha, beta, gamma = self.alpha_beta_gamma(mass)
         times = np.linspace(0, t_f, steps)

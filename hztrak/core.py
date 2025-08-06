@@ -1,32 +1,53 @@
 
 from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
-from astroquery.simbad import Simbad
-
 from astropy import units as u
 from astropy.units import Quantity, UnitTypeError
 from astropy.constants import R_earth, M_earth, R_sun, M_sun, G
 
 import pandas as pd
+import matplotlib.axes
 import matplotlib.pyplot as plt
 
 
-def get_current_parameters(planet_name='Kepler-22 b'):
+def get_current_parameters(planet_name=['Kepler-22 b']):
   '''
-  Returns:
-  Dictionary of stellar parameters. Keys in dictionary include:
-  Planet Mass [Msun]
-  T_eff of star [K]
-  Luminosity of Star [Lsun]
-  Radius of star [Rsun]
+   Returns a dataframe of planet and host star parameters. Parameters include planet name, host star name,
+   planet radius [Rearth], planet mass [Mearth], ratio of planet to stellar radius, stellar effective temperature [K],
+   stellar radius [Rsun], stellar mass [Msun],stellar luminosity [log10(Solar)], stellar age [Gyr], orbital period [days],
+   and orbit semi-major axis [AU].
 
   Args:
-  name_planet: name of planet in nasa exoplanet archive (string)
-  name_star: name of star in Simbad (string)
+  name_planet (list): list of planet names in nasa exoplanet archive
+  
+  Returns:
+  Pandas dataframe: Planet names and parameters for the planet and host star
   '''
-  tab = NasaExoplanetArchive.query_criteria(table="pscomppars", where=f"pl_name='{planet_name}'").to_pandas()
-  dict = tab.to_dict(orient='records')[0]
-  #star_dict = star_tab.to_dict(orient='records')[0]
-  return dict
+  data=[]
+  for i in range(len(planet_name)):
+    tab = NasaExoplanetArchive.query_criteria(table="pscomppars", where=f"pl_name='{planet_name[i]}'").to_pandas()
+    if len(tab)==0:
+      data.append({'pl_name':planet_name[i],           #planet name
+
+      })
+      continue
+    else:
+      planet_dict = tab.to_dict(orient='records')[0]
+      data.append({'pl_name':planet_dict['pl_name'],           #planet name
+          'hostname':planet_dict['hostname'],       #host star name
+          'pl_rade': planet_dict['pl_rade'],          #planet radius [earth radius]
+          'pl_masse': planet_dict['pl_masse'] ,        #planet mass [earth mass]
+          'pl_ratror': planet_dict['pl_ratror'],        #Ratio of Planet to Stellar Radius
+          'st_teff':planet_dict['st_teff'],          #stellar effective temperature [K]
+          'st_rad':planet_dict['st_rad'],           #stellar radius [Rsun]
+          'st_mass':planet_dict['st_mass'],          #stellar mass [Msun]
+          'st_lum':planet_dict['st_lum'],           #Stellar Luminosity [log10(Solar)]
+          'st_age' :planet_dict['st_age'],          #stellar age [Gyr]
+          'pl_orbper':planet_dict['pl_orbper'],        #Orbital period [days]
+          'pl_orbsmax':planet_dict['pl_orbsmax'],       #Orbit Semi-Major Axis [au]
+          })
+  df=pd.DataFrame(data)
+      
+  return df
 
 # def evolve_stellar_parameters(stellar_parameters: dict, current_age, target_age) -> dict:
 
@@ -42,25 +63,21 @@ def get_current_parameters(planet_name='Kepler-22 b'):
 #   return bounds
 
 def visualize(df, time_bc, distance_bc, planet_AU):
-    """
-    Inputs
-    ------
+    """Visualization_1
 
-    df : dataframe
-        Columns are time, distance_hz_in, distance_hz_out
+    Plot the evolution of the habitable zone over time. X-axis is time (Gyr) and y-axis is distance from the star (AU).
+
+    Args:
+        df : pandas dataframe. Columns are time, distance_hz_in, distance_hz_out
     
-    time_bc : list
-        The lower and upper time boundary conditions for your plot. Units in Gyr
+    time_bc : list. The lower and upper time boundary conditions for your plot. Units in Gyr
     
-    distance_bc : list
-        The lower and upper distance-from-star boundary conditions for your plot. Units in AU
+    distance_bc : list. The lower and upper distance-from-star boundary conditions for your plot. Units in AU
     
-    planet_AU : list
-        List of planet distances from star in AU
+    planet_AU : list. List of planet distances from star in AU
     
-    Returns
-    -------
-    plots how habitable zone changes over time
+    Returns:
+        matplotlib.axes.Axes
     """
 
     df = df[(df.time > time_bc[0]) | (df.time < time_bc[1])] # trim x axis
@@ -77,6 +94,7 @@ def visualize(df, time_bc, distance_bc, planet_AU):
     plt.ylabel("Distance from Star (AU)")
 
     plt.show()
+    return matplotlib.axes.Axes
 
 
 def ensure_unit(x, unit: u.Unit):
