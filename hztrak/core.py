@@ -1,4 +1,4 @@
-
+#Authors:
 from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
 from astropy import units as u
 from astropy.units import Quantity, UnitTypeError
@@ -112,7 +112,6 @@ def dist_from_Seff(Seff, L):
     #L must be in solar units
     d = (L / Seff) ** 0.5
     return d
-
 
 def find_hz(st_teff, st_lum):
     """Returns the habitable zone bounds as specified by Kopparapu et al. 2014 (2014ApJ...787L..29K) for a given temperature and luminosity. 
