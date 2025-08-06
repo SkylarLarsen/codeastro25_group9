@@ -83,7 +83,6 @@ def visualize(df, time_bc, distance_bc, planet_AU):
     plt.show()
     return matplotlib.axes.Axes
 
-
 def ensure_unit(x, unit: u.Unit):
     """Helper method to ensure input units are correct.
 
