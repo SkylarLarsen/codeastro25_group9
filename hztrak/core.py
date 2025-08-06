@@ -49,19 +49,6 @@ def get_current_parameters(planet_name=['Kepler-22 b']):
       
   return df
 
-# def evolve_stellar_parameters(stellar_parameters: dict, current_age, target_age) -> dict:
-
-#   return aged_stellar_parameters
-
-
-# def find_habitable_zone(st_teff, st_lum, pl_mass):
-
-#   inner = 0
-#   outer = 0
-  
-#   bounds = [inner, outer]
-#   return bounds
-
 def visualize(df, time_bc, distance_bc, planet_AU):
     """Visualization_1
 
