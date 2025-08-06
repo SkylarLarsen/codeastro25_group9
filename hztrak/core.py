@@ -5,16 +5,22 @@ from astropy.units import Quantity, UnitTypeError
 from astropy.constants import R_earth, M_earth, R_sun, M_sun, G
 
 import pandas as pd
+import matplotlib.axes
 import matplotlib.pyplot as plt
 
 
 def get_current_parameters(planet_name=['Kepler-22 b']):
   '''
-  Returns:
-  Pandas Dataframe of stellar and planet parameters
+   Returns a dataframe of planet and host star parameters. Parameters include planet name, host star name,
+   planet radius [Rearth], planet mass [Mearth], ratio of planet to stellar radius, stellar effective temperature [K],
+   stellar radius [Rsun], stellar mass [Msun],stellar luminosity [log10(Solar)], stellar age [Gyr], orbital period [days],
+   and orbit semi-major axis [AU].
 
   Args:
-  name_planet: list of names of planets in nasa exoplanet archive (string)
+  name_planet (list): list of planet names in nasa exoplanet archive
+  
+  Returns:
+  Pandas dataframe: Planet names and parameters for the planet and host star
   '''
   data=[]
   for i in range(len(planet_name)):
@@ -57,25 +63,21 @@ def get_current_parameters(planet_name=['Kepler-22 b']):
 #   return bounds
 
 def visualize(df, time_bc, distance_bc, planet_AU):
-    """
-    Inputs
-    ------
+    """Visualization_1
 
-    df : dataframe
-        Columns are time, distance_hz_in, distance_hz_out
+    Plot the evolution of the habitable zone over time. X-axis is time (Gyr) and y-axis is distance from the star (AU).
+
+    Args:
+        df : pandas dataframe. Columns are time, distance_hz_in, distance_hz_out
     
-    time_bc : list
-        The lower and upper time boundary conditions for your plot. Units in Gyr
+    time_bc : list. The lower and upper time boundary conditions for your plot. Units in Gyr
     
-    distance_bc : list
-        The lower and upper distance-from-star boundary conditions for your plot. Units in AU
+    distance_bc : list. The lower and upper distance-from-star boundary conditions for your plot. Units in AU
     
-    planet_AU : list
-        List of planet distances from star in AU
+    planet_AU : list. List of planet distances from star in AU
     
-    Returns
-    -------
-    plots how habitable zone changes over time
+    Returns:
+        matplotlib.axes.Axes
     """
 
     df = df[(df.time > time_bc[0]) | (df.time < time_bc[1])] # trim x axis
@@ -92,6 +94,7 @@ def visualize(df, time_bc, distance_bc, planet_AU):
     plt.ylabel("Distance from Star (AU)")
 
     plt.show()
+    return matplotlib.axes.Axes
 
 
 def ensure_unit(x, unit: u.Unit):
