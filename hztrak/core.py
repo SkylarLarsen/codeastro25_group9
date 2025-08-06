@@ -1,4 +1,4 @@
-
+#Authors:
 from astroquery.ipac.nexsci.nasa_exoplanet_archive import NasaExoplanetArchive
 from astropy import units as u
 from astropy.units import Quantity, UnitTypeError
@@ -11,11 +11,16 @@ import matplotlib.pyplot as plt
 
 def get_current_parameters(planet_name=['Kepler-22 b']):
   '''
-  Returns:
-  Pandas Dataframe of stellar and planet parameters
+   Returns a dataframe of planet and host star parameters. Parameters include planet name, host star name,
+   planet radius [Rearth], planet mass [Mearth], ratio of planet to stellar radius, stellar effective temperature [K],
+   stellar radius [Rsun], stellar mass [Msun],stellar luminosity [log10(Solar)], stellar age [Gyr], orbital period [days],
+   and orbit semi-major axis [AU].
 
   Args:
-  name_planet: list of names of planets in nasa exoplanet archive (string)
+  name_planet (list): list of planet names in nasa exoplanet archive
+  
+  Returns:
+  Pandas dataframe: Planet names and parameters for the planet and host star
   '''
   data=[]
   for i in range(len(planet_name)):
@@ -44,32 +49,19 @@ def get_current_parameters(planet_name=['Kepler-22 b']):
       
   return df
 
-# def evolve_stellar_parameters(stellar_parameters: dict, current_age, target_age) -> dict:
-
-#   return aged_stellar_parameters
-
-
-# def find_habitable_zone(st_teff, st_lum, pl_mass):
-
-#   inner = 0
-#   outer = 0
-  
-#   bounds = [inner, outer]
-#   return bounds
-
 def visualize(df, time_bc, distance_bc, planet_AU):
     """Visualization_1
 
     Plot the evolution of the habitable zone over time. X-axis is time (Gyr) and y-axis is distance from the star (AU).
 
     Args:
-        df : pandas dataframe. Columns are time, distance_hz_in, distance_hz_out
+        df (Pandas dataframe): Columns are time, distance_hz_in, distance_hz_out
     
-    time_bc : list. The lower and upper time boundary conditions for your plot. Units in Gyr
+    time_bc (list): The lower and upper time boundary conditions for your plot. Units in Gyr
     
-    distance_bc : list. The lower and upper distance-from-star boundary conditions for your plot. Units in AU
+    distance_bc (list): The lower and upper distance-from-star boundary conditions for your plot. Units in AU
     
-    planet_AU : list. List of planet distances from star in AU
+    planet_AU (list): List of planet distances from star in AU
     
     Returns:
         matplotlib.axes.Axes
@@ -91,13 +83,16 @@ def visualize(df, time_bc, distance_bc, planet_AU):
     plt.show()
     return matplotlib.axes.Axes
 
-
 def ensure_unit(x, unit: u.Unit):
-    """Helper method to ensure input units are correct
-    :param x: Variable to check
-    :param unit: Desired unit (astropy.unit)
-    :returns x: Parameter x with proper unit attached. 
-    :raises UnitTypeError: UnitTypeError raised when quantity requires conversion, but conversion cannot be completed
+    """Helper method to ensure input units are correct.
+
+    Args:
+        x (any): Variable to check
+        unit (astropy.units.Unit): Desired unit 
+    Returns:
+        astropy.units.Quantity: Parameter x with proper unit attached. 
+    Raises:
+        UnitTypeError: Raised when quantity requires conversion, but conversion cannot be completed
     """
 
     if x is None:
@@ -117,11 +112,19 @@ def dist_from_Seff(Seff, L):
     d = (L / Seff) ** 0.5
     return d
 
-
 def find_hz(st_teff, st_lum):
-    """
-    Todo: write documentation
-    note that rg0.1, rg1, and rg5 correspond to the 0.1, 1, and 5 Earth mass runaway greenhouse values. 
+    """Returns the habitable zone bounds as specified by Kopparapu et al. 2014 (2014ApJ...787L..29K) for a given temperature and luminosity. 
+    Both optimistic (Recent Venus-Early Mars) and conservative (runaway/maximum greenhouse) bounds are returned.
+    Note:
+        return table entries rg0.1, rg1, and rg5 correspond to the 0.1, 1, and 5 Earth mass runaway greenhouse values. 
+
+    Args:
+        st_teff (number or u.Quantity): Stellar effective temperature, either as a generic number or u.K
+        st_lum (number or u.Quantity): Steller luminosity (expected as u.Lsun or equivalent generic number)
+
+    Returns:
+        pd.DataFrame: DataFrame containing the max/min distances (AU) from the host star matching (st_teff, st_lum) for each habitable zone scenario calculated in 2014ApJ...787L..29K
+    
     """
 
     def KopparapuEqnFour(SeffSUN, a, b, c, d, tS):
