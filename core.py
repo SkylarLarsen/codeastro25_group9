@@ -79,7 +79,7 @@ def visualize(df, time_bc, distance_bc, planet_AU):
     plt.show()
 
 
-def __ensure_unit(x, unit: u.Unit):
+def ensure_unit(x, unit: u.Unit):
     """Helper method to ensure input units are correct
     :param x: Variable to check
     :param unit: Desired unit (astropy.unit)
