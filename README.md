@@ -1,4 +1,4 @@
-### Habitability_Calculator
+### hztrak
 
 A python package which uses stellar parameters to calculate the habitable zone of a stellar system over the course of the star's lifetime.
 
