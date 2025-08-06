@@ -85,11 +85,15 @@ def visualize(df, time_bc, distance_bc, planet_AU):
 
 
 def ensure_unit(x, unit: u.Unit):
-    """Helper method to ensure input units are correct
-    :param x: Variable to check
-    :param unit: Desired unit (astropy.unit)
-    :returns x: Parameter x with proper unit attached. 
-    :raises UnitTypeError: UnitTypeError raised when quantity requires conversion, but conversion cannot be completed
+    """Helper method to ensure input units are correct.
+
+    Args:
+        x (any): Variable to check
+        unit (astropy.units.Unit): Desired unit 
+    Returns:
+        astropy.units.Quantity: Parameter x with proper unit attached. 
+    Raises:
+        UnitTypeError: Raised when quantity requires conversion, but conversion cannot be completed
     """
 
     if x is None:
@@ -111,9 +115,18 @@ def dist_from_Seff(Seff, L):
 
 
 def find_hz(st_teff, st_lum):
-    """
-    Todo: write documentation
-    note that rg0.1, rg1, and rg5 correspond to the 0.1, 1, and 5 Earth mass runaway greenhouse values. 
+    """Returns the habitable zone bounds as specified by Kopparapu et al. 2014 (2014ApJ...787L..29K) for a given temperature and luminosity. 
+    Both optimistic (Recent Venus-Early Mars) and conservative (runaway/maximum greenhouse) bounds are returned.
+    Note:
+        return table entries rg0.1, rg1, and rg5 correspond to the 0.1, 1, and 5 Earth mass runaway greenhouse values. 
+
+    Args:
+        st_teff (number or u.Quantity): Stellar effective temperature, either as a generic number or u.K
+        st_lum (number or u.Quantity): Steller luminosity (expected as u.Lsun or equivalent generic number)
+
+    Returns:
+        pd.DataFrame: DataFrame containing the max/min distances (AU) from the host star matching (st_teff, st_lum) for each habitable zone scenario calculated in 2014ApJ...787L..29K
+    
     """
 
     def KopparapuEqnFour(SeffSUN, a, b, c, d, tS):
