@@ -63,44 +63,60 @@ TEST_ax.set_ylim(0.5,1.7)
 plt.show()
 
 
+#------------POLAR PLOT-------------------------------------------------
 
-# d_TEST = {
-#     'time': pd.Series([0, 1, 2, 3, 4, 5, 6]),
-#     'distance_planet_star': pd.Series([0.6, 1.0, 1.3, 1.8, 2.0, 2.2, 2.6]),
-#     'distance_hz_in': pd.Series([0.5]*7),
-#     'distance_hz_out': pd.Series([2.5]*7),
-# }
+'''d_TEST = {
+    'pl_orbsmax': pd.Series([0.6, 1.0, 1.3, 1.8, 2.0, 2.2, 2.6]),
+    'distance_hz_in': pd.Series([0.5]*7),
+    'distance_hz_out': pd.Series([2.5]*7),
+ }
+ 
+d_TEST = {'pl_orbsmax': pd.Series([0, 1, 2, 3]),
+      'distance_hz_in': pd.Series([0.8, 0.8, 0.9, 1.2]),
+      'distance_hz_out': pd.Series([1, 1, 1.1, 1.5]),
+                       }
 
-# df_TEST = pd.DataFrame(d_TEST)
+df_TEST = pd.DataFrame(d_TEST)'''
 
-def visualize_polar(df, time_bc, distance_bc, habitable_zone):
-    
-    # Filter based on time and distance
-    df = df[(df.time > time_bc[0]) & (df.time < time_bc[1])]
-    df = df[(df.distance_planet_star > distance_bc[0]) & (df.distance_planet_star < distance_bc[1])]
+a = np.array([0, 1, 2, 3], dtype=np.int32) * u.AU
 
+b = [0.8, 0.8, 0.9, 1.2] * u.AU
+
+c = [1, 1, 1.1, 1.5] * u.AU
+
+at_TEST = QTable([a, b, c],
+            names=('pl_orbsmax', 'distance_hz_in', 'distance_hz_out'),
+            meta={'name': 'hz table'})
+
+
+
+def visualize_polar(astropy_table, distance_bc, habitable_zone):
+
+    df = astropy_table.to_pandas()
     theta = np.linspace(0, 2*np.pi, len(df), endpoint=False)
-    r = df['distance_planet_star']
-    colors = r
+    distance_bc = df['pl_orbsmax'] #orbit semi-major axis [AU]
+    colors = distance_bc
     area = 200
 
     fig = plt.figure(figsize=(6, 6))
     ax = fig.add_subplot(projection='polar')
 
     theta_fill = np.linspace(0, 2*np.pi, 500)
-    r_inner, r_outer = habitable_zone
-    ax.fill(theta_fill, [r_outer]*len(theta_fill), color='lightgreen', alpha=0.3, zorder=0)
-    ax.fill(theta_fill, [r_inner]*len(theta_fill), color='white', alpha=1.0, zorder=1)
+    distance_hz_in, distance_hz_out = habitable_zone
+    ax.fill(theta_fill, [distance_hz_out]*len(theta_fill), color='lightgreen', alpha=0.3, zorder=0)
+    ax.fill(theta_fill, [distance_hz_in]*len(theta_fill), color='white', alpha=1.0, zorder=1)
 
     ax.scatter(0, 0, marker='*', color='gold', s=500, label='The star', zorder=5)
 
-    scatter = ax.scatter(theta, r, c=colors, s=area, cmap='plasma', alpha=0.75, zorder=3)
+    scatter = ax.scatter(theta, distance_bc, c=colors, s=area, cmap='plasma', alpha=0.75, zorder=3)
 
     plt.colorbar(scatter, ax=ax, label='Distance from the star (AU)')
     ax.set_title('Polar plot of the planets in the habitable zone')
 
     plt.show()
-
-habitable_zone = (1.0, 2.0)
-
-# visualize_polar(df_TEST, [0, 7], [0.4, 3.0], habitable_zone)
+    
+habitable_zone = (1.0,2.0) #I still have to figure out how to connect with nick's part
+TEST_plot, TEST_ax = visualize_polar(at_TEST, [0, 7], habitable_zone)
+TEST_ax.set_xlim(0,3)
+TEST_ax.set_ylim(0.5,1.7)
+plt.show()
