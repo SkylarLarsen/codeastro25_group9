@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from hztrak.core import get_current_parameters
 from astropy.table import Table
 from astropy import units as u
+from astropy.constants import L_sun
 
 
 def get_queried_star_from_user():
@@ -22,12 +23,11 @@ def get_queried_star_from_user():
         'st_mass': row['st_mass'],                      # same mass
         'st_rad': row['st_rad'],                        # quantity (Rsun)
         'st_teff': row['st_teff'],                      # quantity (Kelvin)
-        'st_lum': 10 ** row['st_lum'] * u.Lsun,         # converts log(L/Lsun) → Lsun
+        'st_lum': 10 ** row['st_lum'] * L_sun.unit,     # converts log(L/Lsun) → Lsun
         'st_age': row['st_age']                         # quantity (Gyr)
     }
 
     return queried_star
-
 
 class calc:
     def alpha_beta_gamma(self, mass):

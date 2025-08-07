@@ -2,41 +2,33 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import matplotlib.axes
 
-def visualize_1(astropy_table, time_bc, distance_bc, planet_AU):
+def visualize_1(astropy_table, planet_AU):
     """Visualization_1
 
     Plot the evolution of the habitable zone over time.
 
     Args:
         astropy_table (astropy_table): Columns are time, distance_hz_in, distance_hz_out
-    
-        time_bc (list): The lower and upper time boundary conditions for your plot. Units in Gyr
-    
-        distance_bc (list): The lower and upper distance-from-star boundary conditions for your plot. Units in AU
-    
+
         planet_AU (list): List of planet distances from star in AU
     
     Returns:
-        matplotlib.axes.Axes
+        fig, ax
     """
 
     df = astropy_table.to_pandas()
 
-    df = df[(df.time > time_bc[0]) | (df.time < time_bc[1])] # trim x axis
-
-    plt.fill_between(df["time"], df["distance_hz_in"], y2= df["distance_hz_out"], color = 'green', alpha = 0.4)
+    fig, ax = plt.subplots(figsize = (12,7))
+    ax.fill_between(df["time"], df["distance_hz_in"], y2= df["distance_hz_out"], color = 'green', alpha = 0.4)
     
     for i in planet_AU:
-        plt.axhline(y=i, color='k', linestyle='--')
+        ax.axhline(y=i, color='k', linestyle='--')
 
-    plt.ylim(distance_bc)
+    ax.set_title("Habitable Zone over Time")
+    ax.set_xlabel(f"Time ({astropy_table['time'].unit})")
+    ax.set_ylabel(f"Distance from Star ({astropy_table['distance_hz_in'].unit})")
 
-    plt.title("Habitable Zone over Time")
-    plt.xlabel(f"Time ({astropy_table['time'].unit})")
-    plt.ylabel(f"Distance from Star ({astropy_table['distance_hz_in'].unit})")
-
-    plt.show()
-    return matplotlib.axes.Axes
+    return fig, ax
 
 
 
