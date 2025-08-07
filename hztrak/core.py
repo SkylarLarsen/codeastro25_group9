@@ -99,18 +99,21 @@ def find_hz(st_teff, st_lum):
     
     coeff_matrix = pd.DataFrame([recent_venus, runaway_greenhouse_01Mearth, runaway_greenhouse_1Mearth, 
                                  runaway_greenhouse_5Mearth, maximum_greenhouse, early_mars])
-    coeff_matrix.set_index('label', inplace=True)
+
 
     #Add column with the result of eqn. 4 in Kopparapu 2014
+    
     for index, row in coeff_matrix.iterrows():
-        #todo carry units through
+        
         SeffBound = KopparapuEqnFour(row['Seff'], row['a'], row['b'], row['c'], row['d'], T_s.value)
         coeff_matrix.at[index,'SeffBound'] = SeffBound
         distau = __dist_from_Seff(SeffBound, L.value)
         if distau  > 0: 
-           coeff_matrix.at[index,'distBound(AU)'] = distau
+           coeff_matrix.at[index,'distance'] = distau
         else:
-            raise RuntimeError("Negative distance AAAAAAAAAAAAAAAAA")
+            raise RuntimeError("Star temperature/luminosity too high")
 
+    t = QTable([coeff_matrix['label']], names=['Label'])
+    t['Distance'] = (list(coeff_matrix['distance']) * u.AU)
     
-    return coeff_matrix
+    return t
