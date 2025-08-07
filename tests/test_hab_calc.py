@@ -1,9 +1,7 @@
 # ------ TEST w sun like star before querying -------
 import numpy as np
 import matplotlib.pyplot as plt
-
 from hztrak.habitability_calc import calc
-#from habitability_calc import calc
 
 # instantiate the class
 model = calc()
