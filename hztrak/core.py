@@ -36,7 +36,8 @@ def get_current_parameters(planet_name=['Kepler-22 b']):
         else:
             table_list.append(sub_tab)
         final_tab=vstack(table_list)
-    return final_tab
+        df=final_tab.to_pandas()
+    return df
 
 
 def __ensure_unit(x, unit: u.Unit):
