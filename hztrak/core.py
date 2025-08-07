@@ -150,7 +150,11 @@ def find_hz(st_teff, st_lum):
         #todo carry units through
         SeffBound = KopparapuEqnFour(row['Seff'], row['a'], row['b'], row['c'], row['d'], T_s.value)
         coeff_matrix.at[index,'SeffBound'] = SeffBound
-        coeff_matrix.at[index,'distBound(AU)'] = dist_from_Seff(SeffBound, L.value)
-        
+        distau = dist_from_Seff(SeffBound, L.value)
+        if distau  > 0: 
+           coeff_matrix.at[index,'distBound(AU)'] = distau
+        else:
+            raise RuntimeError("Negative distance AAAAAAAAAAAAAAAAA")
+
     
     return coeff_matrix
