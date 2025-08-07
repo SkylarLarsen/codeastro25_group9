@@ -26,8 +26,8 @@ def get_current_parameters(planet_name=['Kepler-22 b']):
   '''
   table_list=[]
   for i in range(len(planet_name)):
-    tab = NasaExoplanetArchive.query_criteria(table="pscomppars", where=f"pl_name='{planet_name[i]}'")
-    sub_tab=tab['pl_name','hostname','pl_rade','pl_bmasse','pl_ratror','st_teff','st_rad','st_mass','st_lum','st_age','pl_orbper','pl_orbsmax']
+    sub_tab = NasaExoplanetArchive.query_criteria(table="pscomppars", where=f"pl_name='{planet_name[i]}'")
+    #sub_tab=tab['pl_name','hostname','pl_rade','pl_bmasse','pl_ratror','st_teff','st_rad','st_mass','st_lum','st_age','pl_orbper','pl_orbsmax']
     if len(sub_tab)==0:
         print(f'{planet_name[i]} not found! Try again bestie :/')
         continue
