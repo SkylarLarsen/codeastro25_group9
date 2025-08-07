@@ -33,22 +33,6 @@ def get_current_parameters(planet_name=['Kepler-22 b']):
     else:
         table_list.append(tab)
     final_tab=vstack(table_list)
-    #   planet_dict = tab.to_dict(orient='records')[0]
-    #   data.append({'pl_name':planet_dict['pl_name'],           #planet name
-    #       'hostname':planet_dict['hostname'],       #host star name
-    #       'pl_rade': planet_dict['pl_rade'],          #planet radius [earth radius]
-    #       'pl_bmasse': planet_dict['pl_masse'] ,        #planet mass [earth mass]
-    #       'pl_ratror': planet_dict['pl_ratror'],        #Ratio of Planet to Stellar Radius
-    #       'st_teff':planet_dict['st_teff'],          #stellar effective temperature [K]
-    #       'st_rad':planet_dict['st_rad'],           #stellar radius [Rsun]
-    #       'st_mass':planet_dict['st_mass'],          #stellar mass [Msun]
-    #       'st_lum':planet_dict['st_lum'],           #Stellar Luminosity [log10(Solar)]
-    #       'st_age' :planet_dict['st_age'],          #stellar age [Gyr]
-    #       'pl_orbper':planet_dict['pl_orbper'],        #Orbital period [days]
-    #       'pl_orbsmax':planet_dict['pl_orbsmax'],       #Orbit Semi-Major Axis [au]
-    #       })
-#   df=pd.DataFrame(data)
-#   tab = Table.from_pandas(df)
   return final_tab
 
 
