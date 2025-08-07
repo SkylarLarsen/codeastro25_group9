@@ -83,7 +83,7 @@ def visualize(df, time_bc, distance_bc, planet_AU):
     plt.show()
     return matplotlib.axes.Axes
 
-def ensure_unit(x, unit: u.Unit):
+def __ensure_unit(x, unit: u.Unit):
     """Helper method to ensure input units are correct.
 
     Args:
@@ -106,7 +106,7 @@ def ensure_unit(x, unit: u.Unit):
             raise u.UnitTypeError(f"{x} cannot be converted to {unit}")
     return x
 
-def dist_from_Seff(Seff, L):
+def __dist_from_Seff(Seff, L):
     """Helper method to convert Seff to distance (AU)"""
     #L must be in solar units
     d = (L / Seff) ** 0.5
@@ -131,8 +131,8 @@ def find_hz(st_teff, st_lum):
         Seff = SeffSUN + a * tS + b * ((tS) ** 2) + c * ((tS) ** 3) + d * ((tS) ** 4)
         return Seff
     
-    L = ensure_unit(st_lum, u.Lsun)
-    T_s = ensure_unit(st_teff, u.K) - 5780 * u.K
+    L = __ensure_unit(st_lum, u.Lsun)
+    T_s = __ensure_unit(st_teff, u.K) - 5780 * u.K
     
     recent_venus = {'label': 'rv', 'Seff': 1.776000 , 'a': 2.136000e-04 , 'b': 2.533000e-08, 'c': -1.33200e-11, 'd': -3.09700e-15}
     runaway_greenhouse_1Mearth = {'label': 'rg1', 'Seff': 1.107, 'a': 1.332000e-04 , 'b': 1.580000e-08, 'c': -8.30800e-12, 'd': -1.93100e-15}
@@ -150,7 +150,7 @@ def find_hz(st_teff, st_lum):
         #todo carry units through
         SeffBound = KopparapuEqnFour(row['Seff'], row['a'], row['b'], row['c'], row['d'], T_s.value)
         coeff_matrix.at[index,'SeffBound'] = SeffBound
-        distau = dist_from_Seff(SeffBound, L.value)
+        distau = __dist_from_Seff(SeffBound, L.value)
         if distau  > 0: 
            coeff_matrix.at[index,'distBound(AU)'] = distau
         else:
