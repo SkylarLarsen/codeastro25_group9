@@ -1,32 +1,52 @@
 import matplotlib.pyplot as plt
+import matplotlib.axes
 import pandas as pd
 import numpy as np
+from astropy.table import QTable
+import astropy.units as u
 
 
-d_TEST = {'time': pd.Series([0, 1, 2, 3]),
-     'distance_hz_in': pd.Series([0.8, 0.8, 0.9, 1.2]),
-     'distance_hz_out': pd.Series([1, 1, 1.1, 1.5]),
-                      }
+# d_TEST = {'time': pd.Series([0, 1, 2, 3]),
+#      'distance_hz_in': pd.Series([0.8, 0.8, 0.9, 1.2]),
+#      'distance_hz_out': pd.Series([1, 1, 1.1, 1.5]),
+#                       }
 
-df_TEST = pd.DataFrame(d_TEST)
+# df_TEST = pd.DataFrame(d_TEST)
 
-def visualize(df, time_bc, distance_bc, planet_AU):
+
+
+# a = np.array([0, 1, 2, 3], dtype=np.int32) * u.Gyr
+
+# b = [0.8, 0.8, 0.9, 1.2] * u.AU
+
+# c = [1, 1, 1.1, 1.5] * u.AU
+
+# at_TEST = QTable([a, b, c],
+#            names=('time', 'distance_hz_in', 'distance_hz_out'),
+#            meta={'name': 'hz table'})
+
+
+
+
+def visualize_1(astropy_table, time_bc, distance_bc, planet_AU):
     """Visualization_1
 
-    Plot the evolution of the habitable zone over time. X-axis is time (Gyr) and y-axis is distance from the star (AU).
+    Plot the evolution of the habitable zone over time.
 
     Args:
-        df (Pandas dataframe): Columns are time, distance_hz_in, distance_hz_out
+        astropy_table (astropy_table): Columns are time, distance_hz_in, distance_hz_out
     
-    time_bc (list): The lower and upper time boundary conditions for your plot. Units in Gyr
+        time_bc (list): The lower and upper time boundary conditions for your plot. Units in Gyr
     
-    distance_bc (list): The lower and upper distance-from-star boundary conditions for your plot. Units in AU
+        distance_bc (list): The lower and upper distance-from-star boundary conditions for your plot. Units in AU
     
-    planet_AU (list): List of planet distances from star in AU
+        planet_AU (list): List of planet distances from star in AU
     
     Returns:
         matplotlib.axes.Axes
     """
+
+    df = astropy_table.to_pandas()
 
     df = df[(df.time > time_bc[0]) | (df.time < time_bc[1])] # trim x axis
 
@@ -38,27 +58,27 @@ def visualize(df, time_bc, distance_bc, planet_AU):
     plt.ylim(distance_bc)
 
     plt.title("Habitable Zone over Time")
-    plt.xlabel("Time (Gyr)")
-    plt.ylabel("Distance from Star (AU)")
+    plt.xlabel(f"Time ({astropy_table['time'].unit})")
+    plt.ylabel(f"Distance from Star ({astropy_table['distance_hz_in'].unit})")
 
     plt.show()
     return matplotlib.axes.Axes
 
 
-TEST_plot = visualize(df_TEST, [0,4], [0.5,1.7], [0.7, 1.1, 1.5])
+TEST_plot = visualize_1(at_TEST, [0,4], [0.5,1.7], [0.7, 1.1, 1.5])
 
 
 
-d_TEST = {
-    'time': pd.Series([0, 1, 2, 3, 4, 5, 6]),
-    'distance_planet_star': pd.Series([0.6, 1.0, 1.3, 1.8, 2.0, 2.2, 2.6]),
-    'distance_hz_in': pd.Series([0.5]*7),
-    'distance_hz_out': pd.Series([2.5]*7),
-}
+# d_TEST = {
+#     'time': pd.Series([0, 1, 2, 3, 4, 5, 6]),
+#     'distance_planet_star': pd.Series([0.6, 1.0, 1.3, 1.8, 2.0, 2.2, 2.6]),
+#     'distance_hz_in': pd.Series([0.5]*7),
+#     'distance_hz_out': pd.Series([2.5]*7),
+# }
 
-df_TEST = pd.DataFrame(d_TEST)
+# df_TEST = pd.DataFrame(d_TEST)
 
-def visualize(df, time_bc, distance_bc, habitable_zone):
+def visualize_polar(df, time_bc, distance_bc, habitable_zone):
     
     # Filter based on time and distance
     df = df[(df.time > time_bc[0]) & (df.time < time_bc[1])]
@@ -88,4 +108,4 @@ def visualize(df, time_bc, distance_bc, habitable_zone):
 
 habitable_zone = (1.0, 2.0)
 
-visualize(df_TEST, [0, 7], [0.4, 3.0], habitable_zone)
+# visualize_polar(df_TEST, [0, 7], [0.4, 3.0], habitable_zone)
