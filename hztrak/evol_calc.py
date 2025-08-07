@@ -5,26 +5,27 @@ import numpy as np
 import matplotlib.pyplot as plt
 from hztrak.core import get_current_parameters
 from astropy.table import Table
+from astropy import units as u
 
 
 def get_queried_star_from_user():
     planet_name = input("Enter exoplanet name (e.g. Kepler-22 b): ")
     df = get_current_parameters([planet_name.strip()])
     
-    if df.empty:
+    if len(df) == 0:
         raise ValueError(f"No data found for planet '{planet_name}'")
 
-    row = df.iloc[0]
-    
+    row = df[0]
+
     queried_star = {
         'pl_name': row['pl_name'],
-        'st_mass': row['st_mass'],                      
-        'st_rad': row['st_rad'],                        
-        'st_teff': row['st_teff'],                      
-        'st_lum': 10 ** row['st_lum'],                  # Convert log10(L/Lsun) → L/Lsun
-        'st_age': row['st_age']                         
+        'st_mass': row['st_mass'],                      # same mass
+        'st_rad': row['st_rad'],                        # quantity (Rsun)
+        'st_teff': row['st_teff'],                      # quantity (Kelvin)
+        'st_lum': 10 ** row['st_lum'] * u.Lsun,         # converts log(L/Lsun) → Lsun
+        'st_age': row['st_age']                         # quantity (Gyr)
     }
-    
+
     return queried_star
 
 
@@ -41,24 +42,25 @@ class calc:
         Returns: 
             int: alpha, beta, gamma
         '''
-        if mass < 0.43:
-            alpha=2.3
-            beta=0.1
-            gamma=0.05
-        elif 0.43 <= mass < 2:
-            alpha=4
-            beta=0.4
-            gamma=0.1
-        elif 2.0 <= mass < 20.0:
-            alpha=3.5
-            beta=0.7
-            gamma=0.2
-        elif mass >= 20:
-            alpha=1.0
-            beta=0.9
-            gamma=0.3
+        if mass < 0.43 * u.Msun:
+            alpha = 2.3
+            beta = 0.1
+            gamma = 0.05
+        elif 0.43 * u.Msun <= mass < 2 * u.Msun:
+            alpha = 4
+            beta = 0.4
+            gamma = 0.1
+        elif 2.0 * u.Msun <= mass < 20.0 * u.Msun:
+            alpha = 3.5
+            beta = 0.7
+            gamma = 0.2
+        elif mass >= 20 * u.Msun:
+            alpha = 1.0
+            beta = 0.9
+            gamma = 0.3
         else:
             raise ValueError('Invalid Mass: Not a number!!')
+        
         return alpha, beta, gamma
     
     def luminosity_evolve(self, L_0, beta, t_f, t, alpha):
@@ -139,7 +141,7 @@ class calc:
 
         """
         alpha, beta, gamma = self.alpha_beta_gamma(mass)
-        times = np.linspace(0, t_f, steps)
+        times = np.linspace(0, t_f.value, steps) * t_f.unit  # times has same unit as t_f
         
         L_vals = []
         R_vals = []

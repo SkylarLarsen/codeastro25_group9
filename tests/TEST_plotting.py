@@ -1,6 +1,32 @@
 import matplotlib.pyplot as plt
-import pandas as pd
 import matplotlib.axes
+import pandas as pd
+import numpy as np
+from astropy.table import QTable
+import astropy.units as u
+
+
+# d_TEST = {'time': pd.Series([0, 1, 2, 3]),
+#      'distance_hz_in': pd.Series([0.8, 0.8, 0.9, 1.2]),
+#      'distance_hz_out': pd.Series([1, 1, 1.1, 1.5]),
+#                       }
+
+# df_TEST = pd.DataFrame(d_TEST)
+
+
+
+# a = np.array([0, 1, 2, 3], dtype=np.int32) * u.Gyr
+
+# b = [0.8, 0.8, 0.9, 1.2] * u.AU
+
+# c = [1, 1, 1.1, 1.5] * u.AU
+
+# at_TEST = QTable([a, b, c],
+#            names=('time', 'distance_hz_in', 'distance_hz_out'),
+#            meta={'name': 'hz table'})
+
+
+
 
 def visualize_1(astropy_table, time_bc, distance_bc, planet_AU):
     """Visualization_1
@@ -39,11 +65,27 @@ def visualize_1(astropy_table, time_bc, distance_bc, planet_AU):
     return matplotlib.axes.Axes
 
 
+TEST_plot = visualize_1(at_TEST, [0,4], [0.5,1.7], [0.7, 1.1, 1.5])
+
+
+
+# d_TEST = {
+#     'time': pd.Series([0, 1, 2, 3, 4, 5, 6]),
+#     'distance_planet_star': pd.Series([0.6, 1.0, 1.3, 1.8, 2.0, 2.2, 2.6]),
+#     'distance_hz_in': pd.Series([0.5]*7),
+#     'distance_hz_out': pd.Series([2.5]*7),
+# }
+
+# df_TEST = pd.DataFrame(d_TEST)
 
 def visualize_polar(df, time_bc, distance_bc, habitable_zone):
     
+    # Filter based on time and distance
+    df = df[(df.time > time_bc[0]) & (df.time < time_bc[1])]
+    df = df[(df.distance_planet_star > distance_bc[0]) & (df.distance_planet_star < distance_bc[1])]
+
     theta = np.linspace(0, 2*np.pi, len(df), endpoint=False)
-    r = '''df['distance_planet_star']'''
+    r = df['distance_planet_star']
     colors = r
     area = 200
 
@@ -63,3 +105,7 @@ def visualize_polar(df, time_bc, distance_bc, habitable_zone):
     ax.set_title('Polar plot of the planets in the habitable zone')
 
     plt.show()
+
+habitable_zone = (1.0, 2.0)
+
+# visualize_polar(df_TEST, [0, 7], [0.4, 3.0], habitable_zone)
