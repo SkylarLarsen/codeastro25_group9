@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import numpy as np
 import matplotlib.pyplot as plt
 from hztrak.core import get_current_parameters
-import astropy
+from astropy.table import Table
 
 
 def get_queried_star_from_user():
@@ -154,8 +154,15 @@ class calc:
             R_vals.append(R_t)
             T_vals.append(T_t)
 
-        return np.array(times), np.array(L_vals), np.array(R_vals), np.array(T_vals)
-
+        #return np.array(times), np.array(L_vals), np.array(R_vals), np.array(T_vals)
+    
+        # Build and return astropy table
+        table = Table(
+            [times, L_vals, R_vals, T_vals],
+            names=('time_yr', 'luminosity_Lsun', 'radius_Rsun', 'temperature_K')
+        )
+        return table
+    
 
 # ------ USE w query -------
 if __name__ == "__main__":
@@ -164,7 +171,8 @@ if __name__ == "__main__":
 
     star = get_queried_star_from_user()
 
-    times, L_arr, R_arr, T_arr = model.evolve_star(
+    # use 'results' for astropy table of the floats
+    results = model.evolve_star(
         L_0=star['st_lum'],
         R_0=star['st_rad'],
         T_0=star['st_teff'],
@@ -173,5 +181,12 @@ if __name__ == "__main__":
         steps=10
     )
 
-    for i in range(len(times)):
-        print(f"t = {times[i]/1e9:.1f} Gyr | L = {L_arr[i]:.3f} L☉ | R = {R_arr[i]:.3f} R☉ | T = {T_arr[i]:.1f} K")
+    for row in results:
+        print(f"t = {row['time_yr']/1e9:.1f} Gyr | L = {row['luminosity_Lsun']:.3f} L☉ | "
+            f"R = {row['radius_Rsun']:.3f} R☉ | T = {row['temperature_K']:.1f} K")
+
+    #print(results)  #Prints the full Astropy table nicely formatted
+
+
+
+
