@@ -1,3 +1,33 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import numpy as np
+import matplotlib.pyplot as plt
+from hztrak.core import get_current_parameters
+import astropy
+
+
+def get_queried_star_from_user():
+    planet_name = input("Enter exoplanet name (e.g. Kepler-22 b): ")
+    df = get_current_parameters([planet_name.strip()])
+    
+    if df.empty:
+        raise ValueError(f"No data found for planet '{planet_name}'")
+
+    row = df.iloc[0]
+    
+    queried_star = {
+        'pl_name': row['pl_name'],
+        'st_mass': row['st_mass'],                      
+        'st_rad': row['st_rad'],                        
+        'st_teff': row['st_teff'],                      
+        'st_lum': 10 ** row['st_lum'],                  # Convert log10(L/Lsun) → L/Lsun
+        'st_age': row['st_age']                         
+    }
+    
+    return queried_star
+
+
 class calc:
     def alpha_beta_gamma(self, mass):
         ''' Alpha Beta Gamma Params
@@ -126,44 +156,22 @@ class calc:
 
         return np.array(times), np.array(L_vals), np.array(R_vals), np.array(T_vals)
 
-    
 
-# ------ TEST w sun like star before querying -------
-import numpy as np
-import matplotlib.pyplot as plt
-#from habitability_calc import calc
+# ------ USE w query -------
+if __name__ == "__main__":
 
-# instantiate the class
-model = calc()
+    model = calc()
 
-# user-defined initial conditions for a Sun-like star
-M_star = 1.0         # Solar masses
-L_0 = 1.0            # Solar luminosity (L_sun)
-T_0 = 5772.0         # Solar effective temperature (K)
-R_0 = 1.0            # Solar radius (R_sun)
-t_f = 1e9           # Approximate MS lifetime (yrs)
-steps = 10
+    star = get_queried_star_from_user()
 
-times, L_arr, R_arr, T_arr = model.evolve_star(L_0, R_0, T_0, M_star, t_f, steps)
+    times, L_arr, R_arr, T_arr = model.evolve_star(
+        L_0=star['st_lum'],
+        R_0=star['st_rad'],
+        T_0=star['st_teff'],
+        mass=star['st_mass'],
+        t_f=star['st_age'] * 1e9,  # Gyr → yr
+        steps=10
+    )
 
-for i in range(steps):
-    print(f"t = {times[i]/1e9:.1f} Gyr | L = {L_arr[i]:.3f} L_sun | R = {R_arr[i]:.3f} R_sun | T = {T_arr[i]:.1f} K")
-
-'''
-# Convert time to Gyr for readability
-times_gyr = times / 1e9
-
-# Plot all on the same graph
-plt.figure(figsize=(10, 6))
-plt.plot(times_gyr, L_arr, label='Luminosity (L/L☉)', marker='o')
-plt.plot(times_gyr, R_arr, label='Radius (R/R☉)', marker='s')
-plt.plot(times_gyr, T_arr / 5772.0, label='Temperature (T/T☉)', marker='^')  # Normalize T to T☉
-
-plt.xlabel('Time (Gyr)')
-plt.ylabel('Normalized Quantity')
-plt.title('Stellar Evolution Over Time (Solar Mass Star)')
-plt.legend()
-plt.grid(True)
-plt.tight_layout()
-plt.show()
-'''
+    for i in range(len(times)):
+        print(f"t = {times[i]/1e9:.1f} Gyr | L = {L_arr[i]:.3f} L☉ | R = {R_arr[i]:.3f} R☉ | T = {T_arr[i]:.1f} K")
