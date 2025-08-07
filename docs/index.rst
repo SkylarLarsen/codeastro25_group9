@@ -16,6 +16,7 @@ documentation for details.
    :caption: Contents:
 
    core.rst
+   plotting.rst
 
 Indices and Tables
 ==================
