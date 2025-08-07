@@ -6,7 +6,7 @@ from astropy.constants import R_earth, M_earth, R_sun, M_sun, G
 
 import pandas as pd
 import matplotlib.axes
-from astropy.table import Table,vstack
+from astropy.table import Table, vstack
 import matplotlib.pyplot as plt
  
 
