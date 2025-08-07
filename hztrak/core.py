@@ -22,7 +22,7 @@ def get_current_parameters(planet_name=['Kepler-22 b']):
     Returns:
         Astropy Table: Planet names and parameters for the planet and host star
     Raises:
-        UnitTypeError: Raised when quantity requires conversion, but conversion cannot be completed
+        Statement: Raises when a planet isn't found in exoplanet database
 
     
     """
