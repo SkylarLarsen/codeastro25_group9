@@ -6,6 +6,7 @@ from astropy.constants import R_earth, M_earth, R_sun, M_sun, G
 
 import pandas as pd
 import matplotlib.axes
+from astropy import Table
 import matplotlib.pyplot as plt
 
 
@@ -46,8 +47,9 @@ def get_current_parameters(planet_name=['Kepler-22 b']):
           'pl_orbsmax':planet_dict['pl_orbsmax'],       #Orbit Semi-Major Axis [au]
           })
   df=pd.DataFrame(data)
+  tab = Table.from_pandas(df)
       
-  return df
+  return tab
 
 def visualize(df, time_bc, distance_bc, planet_AU):
     """Visualization_1
