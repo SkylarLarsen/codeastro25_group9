@@ -1,3 +1,6 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
 class calc:
     def alpha_beta_gamma(self, mass):
         ''' Alpha Beta Gamma Params
@@ -126,11 +129,14 @@ class calc:
 
         return np.array(times), np.array(L_vals), np.array(R_vals), np.array(T_vals)
 
-    
+# ------ use w query -------
+model = calc()
+
+
+
 
 # ------ TEST w sun like star before querying -------
-import numpy as np
-import matplotlib.pyplot as plt
+
 #from habitability_calc import calc
 
 # instantiate the class
@@ -167,3 +173,4 @@ plt.grid(True)
 plt.tight_layout()
 plt.show()
 '''
+
