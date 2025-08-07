@@ -42,12 +42,8 @@ def visualize_1(astropy_table, time_bc, distance_bc, planet_AU):
 
 def visualize_polar(df, time_bc, distance_bc, habitable_zone):
     
-    # Filter based on time and distance
-    df = df[(df.time > time_bc[0]) & (df.time < time_bc[1])]
-    df = df[(df.distance_planet_star > distance_bc[0]) & (df.distance_planet_star < distance_bc[1])]
-
     theta = np.linspace(0, 2*np.pi, len(df), endpoint=False)
-    r = df['distance_planet_star']
+    r = '''df['distance_planet_star']'''
     colors = r
     area = 200
 
