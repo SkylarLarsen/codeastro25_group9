@@ -6,7 +6,7 @@ from astropy.constants import R_earth, M_earth, R_sun, M_sun, G
 
 import pandas as pd
 import matplotlib.axes
-from astropy.table import Table, vstack
+from astropy.table import Table, vstack, QTable
 import matplotlib.pyplot as plt
  
 
@@ -109,12 +109,13 @@ def find_hz(st_teff, st_lum):
         SeffBound = KopparapuEqnFour(row['Seff'], row['a'], row['b'], row['c'], row['d'], T_s.value)
         coeff_matrix.at[index,'SeffBound'] = SeffBound
         distau = __dist_from_Seff(SeffBound, L.value)
+        
         if distau  > 0: 
            coeff_matrix.at[index,'distance'] = distau
         else:
             raise RuntimeError("Star temperature/luminosity too high")
 
     t = QTable([coeff_matrix['label']], names=['Label'])
-    t['Distance'] = (list(coeff_matrix['distance']) * u.AU)
+    t['Distance'] = (list(coeff_matrix['distance']) * u.AU) 
     
     return t
