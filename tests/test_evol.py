@@ -1,40 +1,69 @@
-# ------ TEST w sun like star before querying -------
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import pytest
 import numpy as np
-import matplotlib.pyplot as plt
+import astropy.units as u
 from hztrak.evol_calc import calc
 
-# instantiate the class
-model = calc()
+@pytest.fixture
+def model():
+    return calc()
 
-# user-defined initial conditions for a Sun-like star
-M_star = 1.0         # Solar masses
-L_0 = 1.0            # Solar luminosity (L_sun)
-T_0 = 5772.0         # Solar effective temperature (K)
-R_0 = 1.0            # Solar radius (R_sun)
-t_f = 1e9           # Approximate MS lifetime (yrs)
-steps = 10
+def test_alpha_beta_gamma_low_mass(model):
+    alpha, beta, gamma = model.alpha_beta_gamma(0.3 * u.Msun)
+    assert alpha == 2.3
+    assert beta == 0.1
+    assert gamma == 0.05
 
-times, L_arr, R_arr, T_arr = model.evolve_star(L_0, R_0, T_0, M_star, t_f, steps)
+def test_alpha_beta_gamma_mid_mass(model):
+    alpha, beta, gamma = model.alpha_beta_gamma(1.0 * u.Msun)
+    assert alpha == 4
+    assert beta == 0.4
+    assert gamma == 0.1
 
-for i in range(steps):
-    print(f"t = {times[i]/1e9:.1f} Gyr | L = {L_arr[i]:.3f} L_sun | R = {R_arr[i]:.3f} R_sun | T = {T_arr[i]:.1f} K")
+def test_luminosity_evolve(model):
+    L_0 = 1.0 * u.Lsun
+    beta = 0.4
+    t_f = 10 * u.Gyr
+    t = 5 * u.Gyr
+    alpha = 4
+    L_f = model.luminosity_evolve(L_0, beta, t_f, t, alpha)
+    assert L_f.unit == u.Lsun
+    assert L_f > L_0  # luminosity should increase
 
-'''
-# Convert time to Gyr for readability
-times_gyr = times / 1e9
+def test_radius_evolve(model):
+    R_0 = 1.0 * u.Rsun
+    gamma = 0.1
+    t_f = 10 * u.Gyr
+    t = 5 * u.Gyr
+    alpha = 4
+    R_f = model.radius_evolve(R_0, gamma, t_f, t, alpha)
+    assert R_f.unit == u.Rsun
+    assert R_f > R_0
 
-# Plot all on the same graph
-plt.figure(figsize=(10, 6))
-plt.plot(times_gyr, L_arr, label='Luminosity (L/L☉)', marker='o')
-plt.plot(times_gyr, R_arr, label='Radius (R/R☉)', marker='s')
-plt.plot(times_gyr, T_arr / 5772.0, label='Temperature (T/T☉)', marker='^')  # Normalize T to T☉
+def test_temp_evolve(model):
+    T_0 = 5800 * u.K
+    L_0 = 1.0 * u.Lsun
+    L_f = 1.2 * u.Lsun
+    R_0 = 1.0 * u.Rsun
+    R_f = 1.1 * u.Rsun
+    T_f = model.temp_evolve(T_0, L_f, L_0, R_f, R_0)
+    assert T_f.unit == u.K
+    assert T_f < T_0  # radius increased more than luminosity -> cooler star
 
-plt.xlabel('Time (Gyr)')
-plt.ylabel('Normalized Quantity')
-plt.title('Stellar Evolution Over Time (Solar Mass Star)')
-plt.legend()
-plt.grid(True)
-plt.tight_layout()
-plt.show()
-'''
+def test_evolve_star_table_output(model):
+    L_0 = 1.0 * u.Lsun
+    R_0 = 1.0 * u.Rsun
+    T_0 = 5800 * u.K
+    mass = 1.0 * u.Msun
+    age = 10 * u.Gyr
+    steps = 5
 
+    result_table = model.evolve_star(L_0, R_0, T_0, mass, t_f=age, steps=steps)
+
+    assert len(result_table) == steps
+    assert 'time_yr' in result_table.colnames
+    assert result_table['luminosity_Lsun'].unit == u.Lsun
+    assert result_table['radius_Rsun'].unit == u.Rsun
+    assert result_table['temperature_K'].unit == u.K
