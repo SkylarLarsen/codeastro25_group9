@@ -51,39 +51,6 @@ def get_current_parameters(planet_name=['Kepler-22 b']):
       
   return tab
 
-def visualize(df, time_bc, distance_bc, planet_AU):
-    """Visualization_1
-
-    Plot the evolution of the habitable zone over time. X-axis is time (Gyr) and y-axis is distance from the star (AU).
-
-    Args:
-        df (Pandas dataframe): Columns are time, distance_hz_in, distance_hz_out
-    
-    time_bc (list): The lower and upper time boundary conditions for your plot. Units in Gyr
-    
-    distance_bc (list): The lower and upper distance-from-star boundary conditions for your plot. Units in AU
-    
-    planet_AU (list): List of planet distances from star in AU
-    
-    Returns:
-        matplotlib.axes.Axes
-    """
-
-    df = df[(df.time > time_bc[0]) | (df.time < time_bc[1])] # trim x axis
-
-    plt.fill_between(df["time"], df["distance_hz_in"], y2= df["distance_hz_out"], color = 'green', alpha = 0.4)
-    
-    for i in planet_AU:
-        plt.axhline(y=i, color='k', linestyle='--')
-
-    plt.ylim(distance_bc)
-
-    plt.title("Habitable Zone over Time")
-    plt.xlabel("Time (Gyr)")
-    plt.ylabel("Distance from Star (AU)")
-
-    plt.show()
-    return matplotlib.axes.Axes
 
 def __ensure_unit(x, unit: u.Unit):
     """Helper method to ensure input units are correct.
