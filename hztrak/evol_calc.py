@@ -6,15 +6,14 @@ import matplotlib.pyplot as plt
 from hztrak.core import get_current_parameters
 from astropy.table import Table
 
-
 def get_queried_star_from_user():
     planet_name = input("Enter exoplanet name (e.g. Kepler-22 b): ")
     df = get_current_parameters([planet_name.strip()])
     
-    if df.empty:
+    if len(df)==0:
         raise ValueError(f"No data found for planet '{planet_name}'")
 
-    row = df.iloc[0]
+    row = df[0]  # for Astropy Table use indexing like this
     
     queried_star = {
         'pl_name': row['pl_name'],
