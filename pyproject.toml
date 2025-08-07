@@ -8,7 +8,7 @@ version = "0.0.1"
 
 dependencies = [
  "numpy",
- "astroquery.ipac.nexsci.nasa_exoplanet_archive",
+ "astroquery",
  "astropy",
  "pandas",
  "matplotlib",
