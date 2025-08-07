@@ -7,6 +7,7 @@ from hztrak.core import get_current_parameters
 from astropy.table import Table
 from astropy import units as u
 from astropy.constants import L_sun
+from core import find_hz
 
 '''
 def get_queried_star_from_user():
@@ -29,15 +30,14 @@ def get_queried_star_from_user():
     if len(df) == 0:
         raise ValueError(f"No data found for planet '{planet_names}'")
 
-    row = df[0]
 
     queried_star = {
-        'pl_name': row['pl_name'],
-        'st_mass': row['st_mass'] / u.Msun,                      # same mass
-        'st_rad': row['st_rad'] / u.Rsun,                        # quantity (Rsun)
-        'st_teff': row['st_teff'] / u.K,                      # quantity (Kelvin)
-        'st_lum': 10 ** row['st_lum'],         # converts log(L/Lsun) → Lsun
-        'st_age': row['st_age'] / u.Gyr                         # quantity (Gyr)
+        'pl_name': df.loc[0,'pl_name'],
+        'st_mass': df.loc[0,'st_mass'],                      # same mass
+        'st_rad': df.loc[0,'st_rad'],                        # quantity (Rsun)
+        'st_teff': df.loc[0,'st_teff'],                      # quantity (Kelvin)
+        'st_lum': 10 ** df.loc[0,'st_lum'],                  # converts log(L/Lsun) → Lsun
+        'st_age': df.loc[0,'st_age']                         # quantity (Gyr)
     }
 
     return queried_star
@@ -154,7 +154,7 @@ def evolve_star(L_0, R_0, T_0, mass, t_f=1e10, steps=10):
 
     """
     alpha, beta, gamma = alpha_beta_gamma(mass)
-    times = np.linspace(0, t_f, steps) * t_f  # times has same unit as t_f
+    times = np.linspace(0, t_f, steps)  # times has same unit as t_f
     
     L_vals = []
     R_vals = []
@@ -192,15 +192,35 @@ L_0=star['st_lum'],
 R_0=star['st_rad'],
 T_0=star['st_teff'],
 mass=star['st_mass'],
-t_f=star['st_age'] * 1e9,  # Gyr → yr
+t_f=star['st_age'],
 steps=10
 )
 
 for row in results:
-    print(f"t = {row['time_yr']/1e9:.1f} Gyr | L = {row['luminosity_Lsun']:.3f} L☉ | "
+    print(f"t = {row['time_yr']:.1f} Gyr | L = {row['luminosity_Lsun']:.3f} L☉ | "
         f"R = {row['radius_Rsun']:.3f} R☉ | T = {row['temperature_K']:.1f} K")
 
-#print(results)  #Prints the full Astropy table nicely formatted
+#print(results)  #astropy table print formatted
+
+frames = {} #Keys are the time stamp, the values are the hz bounds
+
+for row in results:
+    t = row['time_yr']
+    t_eff = row['temperature_K']
+    st_lum = row['luminosity_Lsun']
+
+    hz_found = find_hz(st_lum=st_lum, st_teff=t_eff)
+    
+    frames[t] = hz_found
+
+
+print(frames)
+
+#Skylar call your method here
+
+
+
+
 
 
 
