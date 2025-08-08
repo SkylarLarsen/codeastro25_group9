@@ -5,6 +5,8 @@ from astropy.units import Quantity, UnitTypeError
 from astropy.constants import R_earth, M_earth, R_sun, M_sun, G
 
 import pandas as pd
+from math import pi
+import numpy as np
 import matplotlib.axes
 from astropy.table import Table, vstack, QTable
 import matplotlib.pyplot as plt
@@ -68,6 +70,23 @@ def __dist_from_Seff(Seff, L):
     #L must be in solar units
     d = (L / Seff) ** 0.5
     return d
+
+def __orb_per_from_au(st_mass, au):
+    a = au if isinstance(au, u.Quantity) else au * u.AU
+    M = __ensure_unit(st_mass, u.Msun)
+    T = 2 * pi * np.sqrt((a.to(u.m) ** 3) / (G * M))
+
+    return T.to(u.d)
+
+def __au_from_orb_per(st_mass, orb_per):
+    if orb_per is None or st_mass is None:
+        return None
+    M = __ensure_unit(st_mass, u.Msun)
+    T = __ensure_unit(orb_per, u.d)
+
+    a =  (( (T / (2*pi) ) ** 2) * G * M) ** (1/3)
+
+    return a.to(u.AU)
 
 def find_hz(st_teff, st_lum):
     """Returns the habitable zone bounds as specified by Kopparapu et al. 2014 (2014ApJ...787L..29K) for a given temperature and luminosity. 

@@ -9,6 +9,7 @@ from astropy.table import Table
 from astropy import units as u
 from astropy.constants import L_sun
 from core import find_hz
+import core
 
 '''
 def get_queried_star_from_user():
@@ -38,7 +39,8 @@ def get_queried_star_from_user():
         'st_rad': df.loc[0,'st_rad'],                        # quantity (Rsun)
         'st_teff': df.loc[0,'st_teff'],                      # quantity (Kelvin)
         'st_lum': 10 ** df.loc[0,'st_lum'],                  # converts log(L/Lsun) → Lsun
-        'st_age': df.loc[0,'st_age']                         # quantity (Gyr)
+        'st_age': df.loc[0,'st_age'],                         # quantity (Gyr)
+        'pl_orbper': df.loc[0, 'pl_orbper']
     }
 
     return queried_star
@@ -209,6 +211,7 @@ for row in results:
     t = row['time_yr']
     t_eff = row['temperature_K']
     st_lum = row['luminosity_Lsun']
+    
 
     hz_found = find_hz(st_lum=st_lum, st_teff=t_eff)
     
@@ -249,8 +252,9 @@ def visualize_1(f, planet_AU):
 
     return fig, ax
 
-
-fig_final, ax_final = visualize_1(frames, [0.812])
+input_planet_orbper = star['pl_orbper']
+input_planet_au = core.__au_from_orb_per(star['st_mass'], input_planet_orbper)
+fig_final, ax_final = visualize_1(frames, [input_planet_au.value])
 plt.show()
 
 
