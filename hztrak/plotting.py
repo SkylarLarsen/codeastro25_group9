@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.axes
 import pandas as pd
 import numpy as np
-from astropy.table import QTable
+from astropy.table import Table, QTable
 import astropy.units as u
 
 
