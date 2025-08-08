@@ -3,6 +3,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 from hztrak.core import get_current_parameters
 from astropy.table import Table
 from astropy import units as u
@@ -214,14 +215,43 @@ for row in results:
     frames[t] = hz_found
 
 
-print(frames)
+def visualize_1(f, planet_AU):
+    """Visualization_1
 
-#Skylar call your method here
+    Plot the evolution of the habitable zone over time.
+
+    Args:
+        f (dictionary): Columns are time, and "values," a collection of habitable zone boundaries found in Kopparapu et al. 2014
+
+        planet_AU (list): List of planet distances from star in AU
+    
+    Returns:
+        fig, ax
+    """
+    
+    df = pd.DataFrame(f.items(), columns=['time', 'values'])
+
+    hz_in_list = []
+    hz_out_list = []
+    for i in range(len(df)):
+        hz_in_list.append(df['values'][i][2][1]/u.AU)
+        hz_out_list.append(df['values'][i][4][1]/u.AU)
+
+    fig, ax = plt.subplots(figsize = (12,7))
+    ax.fill_between(df["time"], hz_in_list, y2= hz_out_list, color = 'green', alpha = 0.4)
+     
+    for i in planet_AU:
+        ax.axhline(y=i, color='k', linestyle='--')
+
+    ax.set_title("Habitable Zone over Time")
+    ax.set_xlabel(f"Time (Gyr)")
+    ax.set_ylabel(f"Distance from Star (AU)")
+
+    return fig, ax
 
 
-
-
-
+fig_final, ax_final = visualize_1(frames, [0.812])
+plt.show()
 
 
 

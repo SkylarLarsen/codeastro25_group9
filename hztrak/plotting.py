@@ -57,7 +57,7 @@ def visualize_1(astropy_table, planet_AU):
     return fig, ax
 
 
-TEST_plot = visualize_1(at_TEST, [0,4], [0.5,1.7], [0.7, 1.1, 1.5])
+# TEST_plot = visualize_1(at_TEST, [0,4], [0.5,1.7], [0.7, 1.1, 1.5])
 
 #------------POLAR PLOT-------------------------------------------------
 
